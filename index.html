@@ -6,25 +6,51 @@
     <title>Bootstrap Template Atlas</title>
     <meta name="description" content="Free bootstrap template Atlas">
     <link rel="icon" href="img/favicon.png" sizes="32x32" type="image/png">
-    <!-- custom.css -->
-    <link rel="stylesheet" href="css/custom.css">
-    <!-- bootstrap.min.css -->
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-	<!-- font-awesome -->
-    <link rel="stylesheet" href="font-awesome-4.7.0/css/font-awesome.min.css">
     
-    <!-- AOS -->
+    <!-- 预加载关键资源 -->
+    <link rel="preload" href="css/bootstrap.min.css" as="style">
+    <link rel="preload" href="css/custom.css" as="style">
+    <link rel="preload" href="js/aos.js" as="script">
+    <link rel="preload" href="img/logo.webp" as="image">
+    
+    <!-- 关键CSS内联 -->
+    <style>
+        /* 首屏关键CSS */
+        .jumbotron-fluid {
+            padding: 4rem 0;
+        }
+        .text-white {
+            color: #fff !important;
+        }
+        .display-3 {
+            font-size: 3.5rem;
+            font-weight: 300;
+            line-height: 1.2;
+        }
+    </style>
+    
+    <!-- CSS 文件 -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/custom.css">
+    <link rel="stylesheet" href="font-awesome-4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="css/aos.css">
 </head>
 
 <body>
     <!-- banner -->
-    <div class="jumbotron jumbotron-fluid" id="banner" style="background-image: url(img/banner-bk.jpg);">
+    <div class="jumbotron jumbotron-fluid" id="banner" style="background-image: url('img/banner-bk.jpg');">
+        <picture style="display: none;">
+            <source srcset="img/banner-bk.webp" type="image/webp">
+            <source srcset="img/banner-bk.jpg" type="image/jpeg">
+        </picture>
         <div class="container text-center text-md-left">
             <header>
                 <div class="row justify-content-between">
                     <div class="col-2">
-                        <img src="img/logo.png" alt="logo">
+                        <picture>
+                            <source srcset="img/logo.webp" type="image/webp">
+                            <img src="img/logo.png" alt="logo" width="150" height="50" loading="eager">
+                        </picture>
                     </div>
                     <div class="col-6 align-self-center text-right">
                         <a href="#" class="text-white lead">Get Early Access</a>
@@ -47,17 +73,26 @@
         <h2 class="text-center font-weight-bold my-5">Smartest protection for your site</h2>
         <div class="row">
             <div data-aos="fade-up" data-aos-delay="0" data-aos-duration="1000" data-aos-once="true" class="col-md-4 text-center">
-                <img src="img/smart-protect-1.jpg" alt="Anti-spam" class="mx-auto">
+                <picture>
+                    <source srcset="img/smart-protect-1.webp" type="image/webp">
+                    <img src="img/smart-protect-1.jpg" alt="Anti-spam" class="mx-auto" width="200" height="150" loading="lazy">
+                </picture>
                 <h4>Anti-spam</h4>
                 <p>Lorem ipsum dolor sit amet porro his no his deleniti</p>
             </div>
             <div data-aos="fade-up" data-aos-delay="200" data-aos-duration="1000" data-aos-once="true" class="col-md-4 text-center">
-                <img src="img/smart-protect-2.jpg" alt="Phishing Detect" class="mx-auto">
+                <picture>
+                    <source srcset="img/smart-protect-2.webp" type="image/webp">
+                    <img src="img/smart-protect-2.jpg" alt="Phishing Detect" class="mx-auto" width="200" height="150" loading="lazy">
+                </picture>
                 <h4>Phishing Detect</h4>
                 <p>Ne error antiopam usu. Sed vocen concludaturque ea</p>
             </div>
             <div data-aos="fade-up" data-aos-delay="400" data-aos-duration="1000" data-aos-once="true" class="col-md-4 text-center">
-                <img src="img/smart-protect-3.jpg" alt="Smart Scan" class="mx-auto">
+                <picture>
+                    <source srcset="img/smart-protect-3.webp" type="image/webp">
+                    <img src="img/smart-protect-3.jpg" alt="Smart Scan" class="mx-auto" width="200" height="150" loading="lazy">
+                </picture>
                 <h4>Smart Scan</h4>
                 <p>Et usu ocurreret elaboraret doctus prodesse assueverit.</p>
             </div>
@@ -226,10 +261,45 @@
         </div>
     </div>
     
-    <!-- AOS -->
+    <!-- Service Worker 注册 -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful');
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+
+        // 动态设置banner背景图片
+        document.addEventListener('DOMContentLoaded', function() {
+            const banner = document.getElementById('banner');
+            const picture = banner.querySelector('picture');
+            
+            if (picture) {
+                const sources = picture.querySelectorAll('source');
+                for (let source of sources) {
+                    if (source.type === 'image/webp' && source.srcset) {
+                        banner.style.backgroundImage = `url('${source.srcset}')`;
+                        break;
+                    }
+                }
+            }
+        });
+    </script>
+    
+    <!-- 优化后的 AOS 初始化 -->
     <script src="js/aos.js"></script>
     <script>
       AOS.init({
+        duration: 1000,
+        once: true,
+        offset: 100,
+        disable: window.innerWidth < 768
       });
     </script>
 </body>
